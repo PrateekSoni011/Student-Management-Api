@@ -1,7 +1,7 @@
 const express = require('express');
 var jwt = require('jsonwebtoken');
 const app = express();
-const model = require('./repository/model')
+const dbQuerys = require('./repository/dbQuerys')
 
 app.use(express.json())
 
@@ -12,7 +12,7 @@ app.use(function(req, res, next) {
 });
 
 app.post('/studentLogin',(req, res)=>{
-    const parsedJsonData = model.loadUsers();
+    const parsedJsonData = dbQuerys.loadUsers();
     // console.log(parsedJsonData);   
     let result = {
         valid: false,
@@ -36,7 +36,7 @@ app.post('/studentLogin',(req, res)=>{
 })
 
 app.post('/studentSignIn',(req, res)=>{       
-    const parsedJsonData = model.loadUsers();
+    const parsedJsonData = dbQuerys.loadUsers();
     // console.log(parsedJsonData);
     let result = {
         success: false,
@@ -68,7 +68,7 @@ app.post('/studentSignIn',(req, res)=>{
             username:req.body.username,
             password:req.body.password
         })
-        model.saveUser(parsedJsonData);
+        dbQuerys.saveUser(parsedJsonData);
         var token = jwt.sign({username: req.body.username}, '@94urn4u&*^&*98&98u7aiosu98upiOUu798a', { expiresIn: '300000' });
         result.success = true;
         result.token = token;
@@ -78,7 +78,7 @@ app.post('/studentSignIn',(req, res)=>{
 })
 
 app.get('/getStudents',(req, res)=>{
-    const parsedJsonData = model.loadStudent();
+    const parsedJsonData = dbQuerys.loadStudent();
     const totalCount = parsedJsonData.length;
     const result = {
         totalCount,
@@ -86,6 +86,55 @@ app.get('/getStudents',(req, res)=>{
     };
     res.send(result);
 })
+
+app.post('/studentRegister',(req, res)=>{       
+    const studentList = dbQuerys.loadStudent();
+    // console.log(parsedJsonData);
+    let result = {
+        success: false,        
+        error: false,
+        msg:''
+    }  
+
+    if(!req.body.firstName){
+        result.error = true;
+        result.msg = 'Please provide First Name';
+        res.send(result);
+    }
+    if(!req.body.lastName){
+        result.error = true;
+        result.msg = 'Please provide Last Name ';
+        res.send(result);
+    }
+
+    console.log("API HIt", req.body);
+
+    const duplicateUser = studentList.filter((user) => (user.email == req.body.email));
+    console.log("duplicateUser", duplicateUser.length);
+    if(duplicateUser.length != 0){        
+        result.error = true;
+        result.msg = 'Already Registered';
+        res.send(result);
+    }else{
+        const { firstName, lastName , fatherName, email, address, mobileNo, gender , dob , country} = req.body
+        studentList.push({
+            firstName,
+            lastName,
+            fatherName,
+            email,
+            address,
+            mobileNo,
+            gender,
+            dob,
+            country            
+        })
+        dbQuerys.saveStudent(studentList);        
+        result.success = true;        
+        result.msg = 'Student Created Succesfully';
+        res.send(result);
+    }      
+})
+
 
 app.listen(3006,()=>{
     console.log("Server is running on port 3006")
