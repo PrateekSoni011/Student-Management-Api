@@ -1,0 +1,24 @@
+[
+    {
+        "firstName":"Prateek" , 
+        "lastName":"Soni" , 
+        "fatherName":"Rajesh" , 
+        "email":"Prateek@gmail" , 
+        "address":"test" , 
+        "mobileNo":"8989898989" , 
+        "gender":"m" , 
+        "dob":"10/06/1996" , 
+        "country":"India"
+    },
+    {
+        "firstName":"Jack" , 
+        "lastName":"Soni" , 
+        "fatherName":"Test" , 
+        "email":"Test@gmail" , 
+        "address":"test123" , 
+        "mobileNo":"1289898989" , 
+        "gender":"m" , 
+        "dob":"15/03/1996" , 
+        "country":"USA"
+    }
+]
